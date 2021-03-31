@@ -144,7 +144,18 @@ splitSingleID <- function(
   Track$StartsOut <- ""
   Track$tripID <- 0
   ### distance calculated on great circle (WGS84) -----------------------------
-  Track$ColDist <- spDistsN1(Track, colonyWGS, longlat = TRUE) * 1000
+
+  ######## NEW
+  # This modification considers the possibility to have multiple colonies
+  # or locations to split trajectories
+  if(nrow(colony) > 1){
+    ColDist <- spDists(Track, colonyWGS, longlat = TRUE) * 1000
+    Track$ColDist <- apply(ColDist , MARGIN = 1, FUN = min)
+  } else {
+    Track$ColDist <- spDistsN1(Track, colonyWGS, longlat = TRUE) * 1000
+  }
+  ######## NEW
+  
   Trip.Sequence <- 0
   Time.Diff <- 0
   Max.Dist <- 0
